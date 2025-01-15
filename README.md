@@ -16,6 +16,26 @@
 
 `所以微前端的概念是将庞大的应用拆分成小应用，而不是将小应用聚合成大应用。`
 
+## qiankun 简介
+
+qiankun 方案是基于 single-spa 的微前端方案。
+
+`特点：`
+
+- 1、html entry 的方式引入子应用，相比 js entry 极大的降低了应用改造的成本；
+- 2、完备的沙箱方案，js 沙箱做了 SnapshotSandbox、LegacySandbox、ProxySandbox 三套渐进增强方案，css 沙箱做了 strictStyleIsolation、experimentalStyleIsolation 两套适用不同场景的方案；
+- 3、做了静态资源预加载能力。
+
+`不足：`
+
+- 1、适配成本比较高，工程化、生命周期、静态资源路径、路由等都要做一系列的适配工作；
+- 2、css 沙箱采用严格隔离会有各种问题，js 沙箱在某些场景下执行性能下降严重；
+- 3、无法同时激活多个子应用，也不支持子应用保活；
+- 4、无法支持 vite 等 esmodule 脚本运行。
+
+底层原理 js 沙箱使用的是 proxy 进行快照然后用用 with(window){} 包裹起来 with 内的 window 其实就是 proxy.window 我们声明变量 var name = '小满' 实际这个变量挂到了 proxy.window 并不是真正的 window
+css 沙箱原理 第一个就是 shadowDom 隔离 第二个类似于 Vue 的 scoped \[data-qiankun-426732\]
+
 ## demo 采用 monorepo 架构
 
 使用[pnpm](https://pnpm.io/)实现 monorepo 架构

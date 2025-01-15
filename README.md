@@ -79,7 +79,7 @@ pnpm -F [子应用package.json的name] add common
 
 ![](/demo/base.png)
 
-主应用：vue3+vite+history 路由模式
+主应用：vue3+vite+hash 路由模式
 
 ## 参考文章
 

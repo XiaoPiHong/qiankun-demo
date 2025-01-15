@@ -84,8 +84,11 @@ pnpm -F [子应用package.json的name] add common
 1. 主应用安装 qiankun
 
 ```bash
+cd main
 pnpm add qiankun
 ```
+
+待完善。。。
 
 ## 参考文章
 

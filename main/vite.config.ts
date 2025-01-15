@@ -12,6 +12,7 @@ export default ({ mode }) => {
 
   return defineConfig({
     server: {
+      port: 5173,
       proxy: {
         [VITE_API_BASE_URL]: {
           target: "https://prod.api.com",

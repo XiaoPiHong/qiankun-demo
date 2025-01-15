@@ -81,6 +81,12 @@ pnpm -F [子应用package.json的name] add common
 
 主应用：vue3+vite+hash 路由模式
 
+1. 主应用安装 qiankun
+
+```bash
+pnpm add qiankun
+```
+
 ## 参考文章
 
 [微前端（无界）](https://juejin.cn/post/7212603829572911159?searchId=20250115091619E446D29C3FAB969EA36C)

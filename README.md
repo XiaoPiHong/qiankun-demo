@@ -36,7 +36,7 @@ qiankun 方案是基于 single-spa 的微前端方案。
 底层原理 js 沙箱使用的是 proxy 进行快照然后用用 with(window){} 包裹起来 with 内的 window 其实就是 proxy.window 我们声明变量 var name = '小满' 实际这个变量挂到了 proxy.window 并不是真正的 window
 css 沙箱原理 第一个就是 shadowDom 隔离 第二个类似于 Vue 的 scoped \[data-qiankun-426732\]
 
-## demo 采用 monorepo 架构
+## 了解 monorepo 架构
 
 使用[pnpm](https://pnpm.io/)实现 monorepo 架构
 
@@ -72,6 +72,14 @@ pnpm -F [子应用package.json的name] add common
 
 - 1、依赖共用，节省磁盘空间，管理依赖更方便
 - 2、子模块复用技术，可以将项目中自己写的包（如：common）作为依赖引用到子应用中达到复用的效果，且当 common 更新时，对应子应用中的 common 依赖也会实时更新
+
+## 创建主应用（基座）
+
+该 demo 使用 main 作为基座，在主应用中展示子应用，登录信息共用，ui 如下：
+
+![](/demo/base.png)
+
+主应用：vue3+vite+history 路由模式
 
 ## 参考文章
 

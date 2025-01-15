@@ -16,6 +16,22 @@
 
 `所以微前端的概念是将庞大的应用拆分成小应用，而不是将小应用聚合成大应用。`
 
+## demo采用monorepo架构
+
+使用[pnpm](https://pnpm.io/)实现monorepo架构，pnpm 底层原理是使用硬链接（两个文件磁盘地址一样）和软连接（软连接就是文件的一个快捷方式文件）解决了多应用中包不能共用的问题，节省了磁盘空间
+
+```bash
+# 全局安装pnpm
+npm install pnpm -g
+
+# 根目录中执行
+pnpm init
+```
+
+使用monorepo架构，创建pnpm-workspace.yaml文件，配置packages配置项，且在该文件所在的目录中执行install，就会自动识别项目中的所有包含package.json的目录，自动安装依赖
+
+![](/demo/monorepo.png)
+
 ## 参考文章
 
 [微前端（无界）](https://juejin.cn/post/7212603829572911159?searchId=20250115091619E446D29C3FAB969EA36C)

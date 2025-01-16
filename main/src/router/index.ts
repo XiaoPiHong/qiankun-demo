@@ -32,6 +32,17 @@ export const loginRoutes = [
       permissionLevel: RoutePermissionLevelEnum.LOGIN,
     },
   },
+  {
+    /** history模式需要通配所有路由，详见vue-router文档 */
+    path: "/app-vue3/:pathMatch(.*)*",
+    meta: {},
+    component: () => import("@/components/sub-container.vue"),
+  },
+  {
+    path: "/app-vue2/",
+    meta: {},
+    component: () => import("@/components/sub-container.vue"),
+  },
 ];
 
 const router = createRouter({
@@ -71,7 +82,7 @@ router.beforeEach(async (to, from, next) => {
           return false;
         }
       );
-
+      console.log(loginRoutesFiltered);
       router.addRoute({
         name: "LOGIN_ROUTES_ROOT",
         path: "/",

@@ -88,6 +88,8 @@ cd main
 pnpm add qiankun
 ```
 
+2. 在基座中创建 qiankun.config.ts 文件，配置 qiankun 子应用信息（注意是配置子应用的信息）
+
 待完善。。。
 
 ## 参考文章

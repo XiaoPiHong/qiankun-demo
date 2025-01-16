@@ -35,12 +35,18 @@ export const loginRoutes = [
   {
     /** history模式需要通配所有路由，详见vue-router文档 */
     path: "/app-vue3/:pathMatch(.*)*",
-    meta: {},
+    meta: {
+      permissionLevel: RoutePermissionLevelEnum.ADMIN,
+      permissionCode: "security",
+    },
     component: () => import("@/components/sub-container.vue"),
   },
   {
     path: "/app-vue2/",
-    meta: {},
+    meta: {
+      permissionLevel: RoutePermissionLevelEnum.ADMIN,
+      permissionCode: "system",
+    },
     component: () => import("@/components/sub-container.vue"),
   },
 ];

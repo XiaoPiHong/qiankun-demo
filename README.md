@@ -90,6 +90,113 @@ pnpm add qiankun
 
 2. 在基座中创建 qiankun.config.ts 文件，配置 qiankun 子应用信息（注意是配置子应用的信息）
 
+```tsx
+import { registerMicroApps, start } from "qiankun";
+
+/** 子应用表 */
+const subApps = [
+  {
+    name: "vue3", // 子应用名称，跟package.json一致
+    entry: "//localhost:5174", // 子应用入口，本地环境下指定端口，如果是生产环境可以指定域名
+    container: "#sub-container", // 挂载子应用的dom
+    activeRule: "/app-vue3", // 路由匹配规则
+    props: {}, // 主应用与子应用通信传值
+  },
+  {
+    name: "vue2",
+    entry: "//localhost:5175",
+    container: "#sub-container",
+    activeRule: "/app-vue2",
+    props: {},
+  },
+];
+
+/** 注册 */
+export function registerApps() {
+  try {
+    registerMicroApps(subApps, {
+      beforeLoad: [
+        async (app) => {
+          console.log("before load", app);
+        },
+      ],
+      beforeMount: [
+        async (app) => {
+          console.log("before mount", app);
+        },
+      ],
+      afterUnmount: [
+        async (app) => {
+          console.log("before unmount", app);
+        },
+      ],
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+/** 启动 */
+export const startApps = () => {
+  try {
+    return start({
+      sandbox: {
+        strictStyleIsolation: true,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+```
+
+3. 主应路由中配置匹配子应用的路由
+
+此处将 system 和 security 模块作为子应用，做了资源鉴权，如果后端返回的资源列表中没有 permissionCode 对应的资源，将不会把子应用的路由添加到路由表中，也就访问不到子应用的资源。（对于一些需要授权才能访问的子应用这里可以实现）
+
+```tsx
+/** 登录路由 */
+export const loginRoutes = [
+  {
+    path: "/home",
+    component: () => import("@/views/dashboard/home/index.vue"),
+    meta: {
+      label: "首页",
+      icon: () => h(HomeOutlined),
+      permissionLevel: RoutePermissionLevelEnum.LOGIN,
+    },
+  },
+  {
+    /** history模式需要通配所有路由，详见vue-router文档 */
+    path: "/app-vue3/:pathMatch(.*)*",
+    meta: {
+      permissionLevel: RoutePermissionLevelEnum.ADMIN,
+      permissionCode: "security",
+    },
+    component: () => import("@/components/sub-container.vue"),
+  },
+  {
+    path: "/app-vue2/",
+    meta: {
+      permissionLevel: RoutePermissionLevelEnum.ADMIN,
+      permissionCode: "system",
+    },
+    component: () => import("@/components/sub-container.vue"),
+  },
+];
+```
+
+4. 主应用中添加 sub-container.vue 组件，qiankun.config.ts 文件中子应用挂载的节点需要与当前组件的节点对应
+
+```tsx
+<template>
+  <div id="sub-container"></div>
+</template>
+<script lang="ts" setup></script>
+
+<style scoped></style>
+```
+
 待完善。。。
 
 ## 参考文章

@@ -197,6 +197,32 @@ export const loginRoutes = [
 <style scoped></style>
 ```
 
+## 创建微应用前期准备
+
+我希望我的微应用能独立成一个客户端，在基座内部访问时使用的是基座的布局，当独立访问时使用的是微应用的布局。
+
+实现思路：
+
+通过 window.**\_\_POWERED_BY_QIANKUN\_\_** 判断
+
+- 原理：qiankun 会在微前端子应用启动时，向 window 对象注入一个全局变量 **\_\_POWERED_BY_QIANKUN\_\_**，用于标识当前是否运行在 qiankun 主应用中。
+
+- 使用方式：
+
+```js
+if (window.__POWERED_BY_QIANKUN__) {
+  console.log("运行在 qiankun 微前端中");
+} else {
+  console.log("单独访问");
+}
+```
+
+注意：**\_\_POWERED_BY_QIANKUN\_\_** 是 qiankun 提供的标准变量，推荐使用这种方式。
+
+## 创建微应用 A
+
+微应用 A：vue3+vite+history 路由模式
+
 待完善。。。
 
 ## 参考文章

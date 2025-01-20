@@ -88,7 +88,7 @@ cd main
 pnpm add qiankun
 ```
 
-2. 在基座中创建 qiankun.config.ts 文件，配置 qiankun 子应用信息（注意是配置子应用的信息）
+2. 在基座中创建 qiankun.ts 文件，配置 qiankun 子应用信息（注意是配置子应用的信息）
 
 ```tsx
 import { registerMicroApps, start } from "qiankun";
@@ -186,7 +186,7 @@ export const loginRoutes = [
 ];
 ```
 
-4. 主应用中添加 sub-container.vue 组件，qiankun.config.ts 文件中子应用挂载的节点需要与当前组件的节点对应
+4. 主应用中添加 sub-container.vue 组件，qiankun.ts 文件中子应用挂载的节点需要与当前组件的节点对应
 
 ```tsx
 <template>

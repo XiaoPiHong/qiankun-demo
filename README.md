@@ -218,9 +218,9 @@ export const loginRoutes = [
 
 实现思路：
 
-通过 window.**\_\_POWERED_BY_QIANKUN\_\_** 判断
+1. 通过 window.**\_\_POWERED_BY_QIANKUN\_\_** 判断
 
-- 原理：qiankun 会在微前端子应用启动时，向 window 对象注入一个全局变量 **\_\_POWERED_BY_QIANKUN\_\_**，用于标识当前是否运行在 qiankun 主应用中。
+- 原理：我们在主应用注册微应用时，在beforeLoad钩子函数中，向 window 对象注入一个全局变量 **\_\_POWERED_BY_QIANKUN\_\_**，用于标识当前是否运行在 qiankun 主应用中。
 
 - 使用方式：
 
@@ -232,7 +232,16 @@ if (window.__POWERED_BY_QIANKUN__) {
 }
 ```
 
-注意：**\_\_POWERED_BY_QIANKUN\_\_** 是 qiankun 提供的标准变量，推荐使用这种方式。
+2. 如果微应用使用的是vite，也可以使用 **vite-plugin-qiankun** 插件，里面提供了qiankunWindow.**\_\_POWERED_BY_QIANKUN\_\_** 也可以判断是否qiankun环境
+```tsx
+import { qiankunWindow } from "vite-plugin-qiankun/dist/helper";
+
+if (!qiankunWindow.__POWERED_BY_QIANKUN__) {
+  console.log("运行在 qiankun 微前端中");
+} else {
+  console.log("单独访问");
+}
+```
 
 ## 创建微应用 A
 

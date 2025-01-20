@@ -20,6 +20,7 @@
     "pinia-plugin-persistedstate": "^3.2.1",
     "qiankun": "^2.10.16",
     "qs": "^6.12.3",
+    "vite-plugin-qiankun": "^1.0.15",
     "vue": "^3.4.31",
     "vue-router": "^4.4.0"
   },

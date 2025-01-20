@@ -2,6 +2,8 @@ import { resolve } from "node:path";
 import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
+import qiankun from "vite-plugin-qiankun";
+import { qiankunWindow } from "vite-plugin-qiankun/dist/helper";
 
 const root = process.cwd();
 const pathResolve = (pathname: string) => resolve(root, ".", pathname);
@@ -11,6 +13,7 @@ export default ({ mode }) => {
   const { VITE_API_BASE_URL } = loadEnv(mode, process.cwd());
 
   return defineConfig({
+    base: qiankunWindow.__POWERED_BY_QIANKUN__ ? "/app-vue3" : "/",
     server: {
       port: 5174,
       proxy: {
@@ -26,6 +29,9 @@ export default ({ mode }) => {
           },
         },
       },
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
     },
     plugins: [
       vue(),
@@ -33,6 +39,9 @@ export default ({ mode }) => {
         include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/],
         imports: ["vue", "vue-router"],
         dts: true,
+      }),
+      qiankun("vue3", {
+        useDevMode: true,
       }),
     ],
     resolve: {

@@ -6,12 +6,14 @@ import { onMounted } from "vue";
 import { registerApps, startApps } from "@/utils/qiankun";
 
 onMounted(() => {
-  if (!window.QIANKUN_STARTED) {
-    window.QIANKUN_STARTED = true;
-    registerApps();
-    startApps();
-  }
+  registerApps();
+  startApps();
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+#sub-container {
+  width: 100%;
+  height: 100%;
+}
+</style>

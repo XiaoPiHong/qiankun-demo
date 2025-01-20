@@ -9,6 +9,7 @@ import {
   GroupOutlined,
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
+import { qiankunWindow } from "vite-plugin-qiankun/dist/helper";
 
 /** 路由权限级别枚举 */
 enum RoutePermissionLevelEnum {
@@ -114,7 +115,9 @@ export const loginRoutes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(
+    qiankunWindow.__POWERED_BY_QIANKUN__ ? "/app-vue3" : "/"
+  ),
   routes: [...publicRoutes],
 });
 

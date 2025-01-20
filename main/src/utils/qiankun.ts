@@ -9,13 +9,13 @@ const subApps = [
     activeRule: "/app-vue3", // 路由匹配规则
     props: {}, // 主应用与子应用通信传值
   },
-  {
-    name: "vue2",
-    entry: "//localhost:5175",
-    container: "#sub-container",
-    activeRule: "/app-vue2",
-    props: {},
-  },
+  // {
+  //   name: "vue2",
+  //   entry: "//localhost:5175",
+  //   container: "#sub-container",
+  //   activeRule: "/app-vue2",
+  //   props: {},
+  // },
 ];
 
 /** 注册 */
@@ -23,18 +23,33 @@ export function registerApps() {
   try {
     registerMicroApps(subApps, {
       beforeLoad: [
-        async (app) => {
-          console.log("before load", app);
+        (app) => {
+          console.log(
+            "[LifeCycle] before load %c%s",
+            "color: green;",
+            app.name
+          );
+          return Promise.resolve();
         },
       ],
       beforeMount: [
-        async (app) => {
-          console.log("before mount", app);
+        (app) => {
+          console.log(
+            "[LifeCycle] before mount %c%s",
+            "color: green;",
+            app.name
+          );
+          return Promise.resolve();
         },
       ],
       afterUnmount: [
-        async (app) => {
-          console.log("before unmount", app);
+        (app) => {
+          console.log(
+            "[LifeCycle] after unmount %c%s",
+            "color: green;",
+            app.name
+          );
+          return Promise.resolve();
         },
       ],
     });
@@ -48,7 +63,8 @@ export const startApps = () => {
   try {
     return start({
       sandbox: {
-        strictStyleIsolation: true,
+        // strictStyleIsolation: true,
+        // experimentalStyleIsolation: true,
       },
     });
   } catch (err) {

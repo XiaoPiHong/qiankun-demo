@@ -29,6 +29,8 @@ export function registerApps() {
             "color: green;",
             app.name
           );
+          /** 设置qiankun全局变量 */
+          window.__POWERED_BY_QIANKUN__ = true;
           return Promise.resolve();
         },
       ],

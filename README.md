@@ -79,7 +79,7 @@ pnpm -F [子应用package.json的name] add common
 
 ![](/demo/base.png)
 
-主应用：vue3+vite+hash 路由模式
+主应用：vue3+vite+history 路由模式
 
 1. 主应用安装 qiankun
 
@@ -116,18 +116,33 @@ export function registerApps() {
   try {
     registerMicroApps(subApps, {
       beforeLoad: [
-        async (app) => {
-          console.log("before load", app);
+        (app) => {
+          console.log(
+            "[LifeCycle] before load %c%s",
+            "color: green;",
+            app.name
+          );
+          return Promise.resolve();
         },
       ],
       beforeMount: [
-        async (app) => {
-          console.log("before mount", app);
+        (app) => {
+          console.log(
+            "[LifeCycle] before mount %c%s",
+            "color: green;",
+            app.name
+          );
+          return Promise.resolve();
         },
       ],
       afterUnmount: [
-        async (app) => {
-          console.log("before unmount", app);
+        (app) => {
+          console.log(
+            "[LifeCycle] after unmount %c%s",
+            "color: green;",
+            app.name
+          );
+          return Promise.resolve();
         },
       ],
     });
@@ -141,7 +156,8 @@ export const startApps = () => {
   try {
     return start({
       sandbox: {
-        strictStyleIsolation: true,
+        // strictStyleIsolation: true,
+        // experimentalStyleIsolation: true,
       },
     });
   } catch (err) {
@@ -192,9 +208,8 @@ export const loginRoutes = [
 <template>
   <div id="sub-container"></div>
 </template>
-<script lang="ts" setup></script>
-
-<style scoped></style>
+<script lang="ts" setup> </script>
+<style scoped> </style>
 ```
 
 ## 创建微应用前期准备

@@ -65,7 +65,9 @@ export const startApps = () => {
   try {
     return start({
       sandbox: {
+        /** 使用沙箱方式隔离样式 */
         // strictStyleIsolation: true,
+        /** 通过给样式添加前缀来实现隔离 */
         // experimentalStyleIsolation: true,
       },
     });

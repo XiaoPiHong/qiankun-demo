@@ -1,5 +1,5 @@
 <template>
-  <div id="sub-container"></div>
+  <div id="sub-container" class="w-full h-full"></div>
 </template>
 <script lang="ts" setup>
 import { onMounted } from "vue";
@@ -10,10 +10,4 @@ onMounted(() => {
   startApps();
 });
 </script>
-
-<style scoped>
-#sub-container {
-  width: 100%;
-  height: 100%;
-}
-</style>
+<style scoped> </style>

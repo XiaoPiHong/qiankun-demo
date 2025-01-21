@@ -88,7 +88,6 @@ router.beforeEach(async (to, from, next) => {
           return false;
         }
       );
-      console.log(loginRoutesFiltered);
       router.addRoute({
         name: "LOGIN_ROUTES_ROOT",
         path: "/",

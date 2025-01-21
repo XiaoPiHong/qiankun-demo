@@ -6,8 +6,11 @@ import { onMounted } from "vue";
 import { registerApps, startApps } from "@/utils/qiankun";
 
 onMounted(() => {
-  registerApps();
-  startApps();
+  if (!window.__QIANKUN_HAS_BEEN_STARTED__) {
+    registerApps();
+    startApps();
+    window.__QIANKUN_HAS_BEEN_STARTED__ = true;
+  }
 });
 </script>
-<style scoped> </style>
+<style scoped></style>

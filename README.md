@@ -202,7 +202,7 @@ export const loginRoutes = [
 ];
 ```
 
-4. 主应用中添加 sub-container.vue 组件，qiankun.ts 文件中子应用挂载的节点需要与当前组件的节点对应，在此组件挂载时注册并开启微应用
+4. 主应用中添加 sub-container.vue 组件，qiankun.ts 文件中子应用挂载的节点需要与当前组件的节点对应，在此组件挂载时注册并开启微应用，最后向 window 注入\_\_QIANKUN_HAS_BEEN_STARTED\_\_变量（防止反复注册）
 
 ```tsx
 <template>
@@ -213,11 +213,14 @@ import { onMounted } from "vue";
 import { registerApps, startApps } from "@/utils/qiankun";
 
 onMounted(() => {
-  registerApps();
-  startApps();
+  if (!window.__QIANKUN_HAS_BEEN_STARTED__) {
+    registerApps();
+    startApps();
+    window.__QIANKUN_HAS_BEEN_STARTED__ = true;
+  }
 });
 </script>
-<style scoped> </style>
+<style scoped></style>
 ```
 
 ## 创建微应用前期准备

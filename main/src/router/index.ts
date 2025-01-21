@@ -2,7 +2,12 @@ import { createRouter, createWebHistory } from "vue-router";
 import { useUserStore } from "@/stores/";
 import * as utilsTree from "@/utils/tree";
 import LayoutsDefault from "@/layouts/default/index.vue";
-import { HomeOutlined } from "@ant-design/icons-vue";
+import {
+  HomeOutlined,
+  SettingFilled,
+  UserOutlined,
+  GroupOutlined,
+} from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 
 /** 路由权限级别枚举 */
@@ -32,22 +37,96 @@ export const loginRoutes = [
       permissionLevel: RoutePermissionLevelEnum.LOGIN,
     },
   },
+  // {
+  //   /** history模式需要通配所有路由，详见vue-router文档 */
+  //   path: "/app-vue3/:pathMatch(.*)*",
+  //   meta: {
+  //     permissionLevel: RoutePermissionLevelEnum.ADMIN,
+  //     permissionCode: "security",
+  //   },
+  //   component: () => import("@/components/sub-container.vue"),
+  // },
+  // {
+  //   path: "/app-vue2/",
+  //   meta: {
+  //     permissionLevel: RoutePermissionLevelEnum.ADMIN,
+  //     permissionCode: "system",
+  //   },
+  //   component: () => import("@/components/sub-container.vue"),
+  // },
   {
-    /** history模式需要通配所有路由，详见vue-router文档 */
-    path: "/app-vue3/:pathMatch(.*)*",
+    path: "/app-vue3/security",
+    redirect: "/app-vue3/security/permission",
     meta: {
+      label: "安全管理",
+      icon: () => h(SettingFilled),
       permissionLevel: RoutePermissionLevelEnum.ADMIN,
       permissionCode: "security",
     },
-    component: () => import("@/components/sub-container.vue"),
+    children: [
+      {
+        path: "permission",
+        component: () => import("@/components/sub-container.vue"),
+        meta: {
+          label: "权限管理",
+          icon: () => h(UserOutlined),
+          permissionLevel: RoutePermissionLevelEnum.ADMIN,
+          permissionCode: "security:permission",
+        },
+      },
+      {
+        path: "permission-group",
+        component: () => import("@/components/sub-container.vue"),
+        meta: {
+          label: "权限组管理",
+          icon: () => h(GroupOutlined),
+          permissionLevel: RoutePermissionLevelEnum.ADMIN,
+          permissionCode: "security:permission-group",
+        },
+      },
+    ],
   },
   {
-    path: "/app-vue2/",
+    path: "/app-vue3/system",
+    redirect: "/app-vue3/system/user",
     meta: {
+      label: "系统管理",
+      icon: () => h(SettingFilled),
       permissionLevel: RoutePermissionLevelEnum.ADMIN,
       permissionCode: "system",
     },
-    component: () => import("@/components/sub-container.vue"),
+    children: [
+      {
+        path: "user",
+        component: () => import("@/components/sub-container.vue"),
+        meta: {
+          label: "用户管理",
+          icon: () => h(UserOutlined),
+          permissionLevel: RoutePermissionLevelEnum.ADMIN,
+          permissionCode: "system:user",
+        },
+      },
+      {
+        path: "user-group",
+        component: () => import("@/components/sub-container.vue"),
+        meta: {
+          label: "用户组管理",
+          icon: () => h(GroupOutlined),
+          permissionLevel: RoutePermissionLevelEnum.ADMIN,
+          permissionCode: "system:user-group",
+        },
+      },
+      {
+        path: "client",
+        component: () => import("@/components/sub-container.vue"),
+        meta: {
+          label: "客户端管理",
+          icon: () => h(GroupOutlined),
+          permissionLevel: RoutePermissionLevelEnum.ADMIN,
+          permissionCode: "system:client",
+        },
+      },
+    ],
   },
 ];
 

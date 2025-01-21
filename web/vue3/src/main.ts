@@ -1,6 +1,6 @@
 import "./style.css";
 import "ant-design-vue/dist/reset.css";
-import { createApp } from "vue";
+import { createApp, App as VueApp } from "vue";
 import { createPinia } from "pinia";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import App from "./app.vue";
@@ -12,15 +12,15 @@ import {
   qiankunWindow,
 } from "vite-plugin-qiankun/dist/helper";
 
-const app = createApp(App);
+let app: VueApp<Element> | null = null;
 const pinia = createPinia();
 
 pinia.use(piniaPluginPersistedstate);
-const usedApp = app.use(router).use(pinia).use(Antd).use(pluginsDayjs);
 
 /** 独立运行初始化函数 */
 const init = () => {
-  usedApp.mount("#app");
+  app = createApp(App);
+  app.use(router).use(pinia).use(Antd).use(pluginsDayjs).mount("#app");
 };
 
 /** qiankun运行初始化函数 */
@@ -31,12 +31,14 @@ const qiankunInit = () => {
     },
     mount(props: any) {
       const { container } = props;
-      usedApp.mount(container.querySelector("#app"));
+      app = createApp(App);
+      app.use(router).use(pinia).use(Antd).use(pluginsDayjs);
+      app.mount(container.querySelector("#app"));
       console.log("子应用挂载");
     },
-
     unmount(props: any) {
-      usedApp.unmount();
+      app!.unmount();
+      app = null;
       console.log("子应用卸载");
     },
     update(props: any) {

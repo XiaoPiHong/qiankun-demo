@@ -228,7 +228,7 @@ onMounted(() => {
 
 1. 通过 window.**\_\_POWERED_BY_QIANKUN\_\_** 判断
 
-- 原理：我们在主应用注册微应用时，在beforeLoad钩子函数中，向 window 对象注入一个全局变量 **\_\_POWERED_BY_QIANKUN\_\_**，用于标识当前是否运行在 qiankun 主应用中。
+- 原理：我们在主应用注册微应用时，在 beforeLoad 钩子函数中，向 window 对象注入一个全局变量 **\_\_POWERED_BY_QIANKUN\_\_**，用于标识当前是否运行在 qiankun 主应用中。
 
 - 使用方式：
 
@@ -240,7 +240,8 @@ if (window.__POWERED_BY_QIANKUN__) {
 }
 ```
 
-2. 如果微应用使用的是vite，也可以使用 **vite-plugin-qiankun** 插件，里面提供了qiankunWindow.**\_\_POWERED_BY_QIANKUN\_\_** 也可以判断是否qiankun环境
+2. 如果微应用使用的是 vite，也可以使用 **vite-plugin-qiankun** 插件，里面提供了 qiankunWindow.**\_\_POWERED_BY_QIANKUN\_\_** 也可以判断是否 qiankun 环境
+
 ```tsx
 import { qiankunWindow } from "vite-plugin-qiankun/dist/helper";
 

@@ -60,6 +60,7 @@ export const loginRoutes = [
           icon: () => h(UserOutlined),
           permissionLevel: RoutePermissionLevelEnum.ADMIN,
           permissionCode: "security:permission",
+          keepAlive: true,
         },
       },
       {

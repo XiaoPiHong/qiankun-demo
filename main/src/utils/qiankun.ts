@@ -24,13 +24,13 @@ export function registerApps() {
     registerMicroApps(subApps, {
       beforeLoad: [
         (app) => {
+          /** 设置qiankun全局变量 */
+          window.__POWERED_BY_QIANKUN__ = true;
           console.log(
             "[LifeCycle] before load %c%s",
             "color: green;",
             app.name
           );
-          /** 设置qiankun全局变量 */
-          window.__POWERED_BY_QIANKUN__ = true;
           return Promise.resolve();
         },
       ],

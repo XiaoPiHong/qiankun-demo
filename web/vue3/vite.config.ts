@@ -12,6 +12,7 @@ export default ({ mode }) => {
   const { VITE_API_BASE_URL } = loadEnv(mode, process.cwd());
 
   return defineConfig({
+    base: "/app-vue3/",
     server: {
       port: 5174,
       proxy: {

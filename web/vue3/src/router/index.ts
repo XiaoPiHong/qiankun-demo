@@ -11,6 +11,10 @@ import {
 import { message } from "ant-design-vue";
 import { qiankunWindow } from "vite-plugin-qiankun/dist/helper";
 
+export const prefixUrl = qiankunWindow.__POWERED_BY_QIANKUN__
+  ? "/app-vue3"
+  : "";
+
 /** 路由权限级别枚举 */
 enum RoutePermissionLevelEnum {
   PUBLIC = "PUBLIC",
@@ -21,7 +25,7 @@ enum RoutePermissionLevelEnum {
 /** 公共路由 */
 export const publicRoutes = [
   {
-    path: "/app-vue3/login",
+    path: prefixUrl + "/login",
     component: () => import("@/views/login/index.vue"),
     meta: { permissionLevel: RoutePermissionLevelEnum.PUBLIC },
   },
@@ -30,7 +34,7 @@ export const publicRoutes = [
 /** 登录路由 */
 export const loginRoutes = [
   {
-    path: "/app-vue3/home",
+    path: prefixUrl + "/home",
     component: () => import("@/views/dashboard/home/index.vue"),
     meta: {
       label: "首页",
@@ -39,8 +43,8 @@ export const loginRoutes = [
     },
   },
   {
-    path: "/app-vue3/security",
-    redirect: "/app-vue3/security/permission",
+    path: prefixUrl + "/security",
+    redirect: prefixUrl + "/security/permission",
     meta: {
       label: "安全管理",
       icon: () => h(SettingFilled),
@@ -71,8 +75,8 @@ export const loginRoutes = [
     ],
   },
   {
-    path: "/app-vue3/system",
-    redirect: "/app-vue3/system/user",
+    path: prefixUrl + "/system",
+    redirect: prefixUrl + "/system/user",
     meta: {
       label: "系统管理",
       icon: () => h(SettingFilled),
@@ -130,7 +134,7 @@ router.beforeEach(async (to, from, next) => {
         message.error("获取用户信息失败，请重新登录");
         userStore.logout();
         router.removeRoute("LOGIN_ROUTES_ROOT");
-        next("/app-vue3/login");
+        next(prefixUrl + "/login");
       }
 
       const permissionCodeMap = userStore.permissionCodeMap;
@@ -155,21 +159,21 @@ router.beforeEach(async (to, from, next) => {
         name: "LOGIN_ROUTES_ROOT",
         path: "/",
         component: LayoutsDefault,
-        redirect: "/app-vue3/home",
+        redirect: prefixUrl + "/home",
         children: loginRoutesFiltered,
       });
 
       next(to.path);
     } else {
-      if (to.path === "/app-vue3/login") {
-        next("/app-vue3/home");
+      if (to.path === prefixUrl + "/login") {
+        next(prefixUrl + "/home");
       } else {
         next();
       }
     }
   } else {
     if (to.meta.permissionLevel !== RoutePermissionLevelEnum.PUBLIC) {
-      next("/app-vue3/login");
+      next(prefixUrl + "/login");
     } else {
       next();
     }

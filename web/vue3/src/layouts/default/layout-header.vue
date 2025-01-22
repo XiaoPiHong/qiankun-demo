@@ -37,6 +37,7 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons-vue";
 import { useUserStore } from "@/stores";
+import { prefixUrl } from "@/router";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -50,7 +51,7 @@ const onClickLogoutBtn = () => {
     content: "您将退出当前登录状态，确认继续吗？",
     onOk: () => {
       userStore.logout();
-      router.push("/app-vue3/login");
+      router.push(prefixUrl + "/login");
     },
   });
 };

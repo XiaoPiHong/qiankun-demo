@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import { useUserStore } from "@/stores/";
 import * as utilsTree from "@/utils/tree";
 import LayoutsDefault from "@/layouts/default/index.vue";
@@ -21,7 +21,7 @@ enum RoutePermissionLevelEnum {
 /** 公共路由 */
 export const publicRoutes = [
   {
-    path: "/login",
+    path: "/app-vue3/login",
     component: () => import("@/views/login/index.vue"),
     meta: { permissionLevel: RoutePermissionLevelEnum.PUBLIC },
   },
@@ -30,7 +30,7 @@ export const publicRoutes = [
 /** 登录路由 */
 export const loginRoutes = [
   {
-    path: "/home",
+    path: "/app-vue3/home",
     component: () => import("@/views/dashboard/home/index.vue"),
     meta: {
       label: "首页",
@@ -39,8 +39,8 @@ export const loginRoutes = [
     },
   },
   {
-    path: "/security",
-    redirect: "/security/permission",
+    path: "/app-vue3/security",
+    redirect: "/app-vue3/security/permission",
     meta: {
       label: "安全管理",
       icon: () => h(SettingFilled),
@@ -71,8 +71,8 @@ export const loginRoutes = [
     ],
   },
   {
-    path: "/system",
-    redirect: "/system/user",
+    path: "/app-vue3/system",
+    redirect: "/app-vue3/system/user",
     meta: {
       label: "系统管理",
       icon: () => h(SettingFilled),
@@ -115,9 +115,7 @@ export const loginRoutes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(
-    qiankunWindow.__POWERED_BY_QIANKUN__ ? "/app-vue3" : "/"
-  ),
+  history: createWebHashHistory(),
   routes: [...publicRoutes],
 });
 
@@ -132,7 +130,7 @@ router.beforeEach(async (to, from, next) => {
         message.error("获取用户信息失败，请重新登录");
         userStore.logout();
         router.removeRoute("LOGIN_ROUTES_ROOT");
-        next("/login");
+        next("/app-vue3/login");
       }
 
       const permissionCodeMap = userStore.permissionCodeMap;
@@ -157,21 +155,21 @@ router.beforeEach(async (to, from, next) => {
         name: "LOGIN_ROUTES_ROOT",
         path: "/",
         component: LayoutsDefault,
-        redirect: "/home",
+        redirect: "/app-vue3/home",
         children: loginRoutesFiltered,
       });
 
       next(to.path);
     } else {
-      if (to.path === "/login") {
-        next("/home");
+      if (to.path === "/app-vue3/login") {
+        next("/app-vue3/home");
       } else {
         next();
       }
     }
   } else {
     if (to.meta.permissionLevel !== RoutePermissionLevelEnum.PUBLIC) {
-      next("/login");
+      next("/app-vue3/login");
     } else {
       next();
     }

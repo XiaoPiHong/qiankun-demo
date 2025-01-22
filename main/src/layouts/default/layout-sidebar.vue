@@ -47,6 +47,7 @@ const menuList = computed<MenuProps["items"]>(() => {
  * 事件监听，click on MenuItem
  */
 const onClickMenuItem = ({ item, key, keyPath }) => {
+  console.log(item, key);
   router.push(key);
 };
 </script>

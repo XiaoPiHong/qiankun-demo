@@ -50,7 +50,7 @@ const onClickLogoutBtn = () => {
     content: "您将退出当前登录状态，确认继续吗？",
     onOk: () => {
       userStore.logout();
-      router.push("/login");
+      router.push("/app-vue3/login");
     },
   });
 };

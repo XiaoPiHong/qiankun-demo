@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import { useUserStore } from "@/stores/";
 import * as utilsTree from "@/utils/tree";
 import LayoutsDefault from "@/layouts/default/index.vue";
@@ -131,7 +131,7 @@ export const loginRoutes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes: [...publicRoutes],
 });
 

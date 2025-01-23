@@ -79,7 +79,7 @@ pnpm -F [子应用package.json的name] add common
 
 ![](/demo/base.png)
 
-主应用：vue3+vite+history 路由模式
+主应用：vue3+vite+hash 路由模式
 
 1. 主应用安装 qiankun
 
@@ -97,17 +97,10 @@ import { registerMicroApps, start } from "qiankun";
 const subApps = [
   {
     name: "vue3", // 子应用名称，跟package.json一致
-    entry: "//localhost:5174", // 子应用入口，本地环境下指定端口，如果是生产环境可以指定域名
+    entry: "//localhost:5174", // 子应用入口（生产环境: //xxx.com）
     container: "#sub-container", // 挂载子应用的dom
     activeRule: "/app-vue3", // 路由匹配规则
     props: {}, // 主应用与子应用通信传值
-  },
-  {
-    name: "vue2",
-    entry: "//localhost:5175",
-    container: "#sub-container",
-    activeRule: "/app-vue2",
-    props: {},
   },
 ];
 
@@ -117,6 +110,8 @@ export function registerApps() {
     registerMicroApps(subApps, {
       beforeLoad: [
         (app) => {
+          /** 设置qiankun全局变量 */
+          window.__POWERED_BY_QIANKUN__ = true;
           console.log(
             "[LifeCycle] before load %c%s",
             "color: green;",
@@ -156,7 +151,15 @@ export const startApps = () => {
   try {
     return start({
       sandbox: {
+        /**
+         * 使用沙箱方式隔离样式：
+         * 坑：很多ui框架会把样式注入到文档的head标签中，而开启Shadow DOM技术使外部不影响内部，内部不影响外部，子应用Shadow DOM也就获取不到文档head中外联的css，就会导致子应用的许多组件样式失效
+         */
         // strictStyleIsolation: true,
+        /**
+         * 通过给样式添加前缀来实现隔离：
+         * 坑：它是给子应用的所有样式加了一层 data-qiankun=“应用名” 的选择器来隔离，这样会导致加了前缀的样式的权重比ui框架的样式权重高，所以会影响ui框架的样式
+         */
         // experimentalStyleIsolation: true,
       },
     });
@@ -171,7 +174,30 @@ export const startApps = () => {
 此处将 system 和 security 模块作为子应用，做了资源鉴权，如果后端返回的资源列表中没有 permissionCode 对应的资源，将不会把子应用的路由添加到路由表中，也就访问不到子应用的资源。（对于一些需要授权才能访问的子应用这里可以实现）
 
 ```tsx
-/** 登录路由 */
+// 由于我的主应用需要有导航栏来打开子应用，所以我的主应用需要有子应用的路由表，如果主应用不需要有子应用的路由表那么只写一个通配符路由来匹配子应用的路由
+
+/** 通配子应用路由 */
+const loginRoutes = [
+  {
+    path: "/home",
+    component: () => import("@/views/dashboard/home/index.vue"),
+    meta: {
+      label: "首页",
+      icon: () => h(HomeOutlined),
+      permissionLevel: RoutePermissionLevelEnum.LOGIN,
+    },
+  },
+  {
+    path: "/app-vue3/:pathMatch(.*)*",
+    meta: {
+      permissionLevel: RoutePermissionLevelEnum.ADMIN,
+      permissionCode: "security",
+    },
+    component: () => import("@/components/sub-container.vue"),
+  },
+];
+
+/** 目前主应用的路由(左侧导航栏是用鉴权过的路由中获取的) */
 export const loginRoutes = [
   {
     path: "/home",
@@ -183,22 +209,38 @@ export const loginRoutes = [
     },
   },
   {
-    /** history模式需要通配所有路由，详见vue-router文档 */
-    path: "/app-vue3/:pathMatch(.*)*",
+    path: "/app-vue3/security",
+    redirect: "/app-vue3/security/permission",
     meta: {
+      label: "安全管理",
+      icon: () => h(SettingFilled),
       permissionLevel: RoutePermissionLevelEnum.ADMIN,
       permissionCode: "security",
     },
-    component: () => import("@/components/sub-container.vue"),
+    children: [
+      {
+        path: "permission",
+        component: () => import("@/components/sub-container.vue"),
+        meta: {
+          label: "权限管理",
+          icon: () => h(UserOutlined),
+          permissionLevel: RoutePermissionLevelEnum.ADMIN,
+          permissionCode: "security:permission",
+        },
+      },
+      {
+        path: "permission-group",
+        component: () => import("@/components/sub-container.vue"),
+        meta: {
+          label: "权限组管理",
+          icon: () => h(GroupOutlined),
+          permissionLevel: RoutePermissionLevelEnum.ADMIN,
+          permissionCode: "security:permission-group",
+        },
+      },
+    ],
   },
-  {
-    path: "/app-vue2/",
-    meta: {
-      permissionLevel: RoutePermissionLevelEnum.ADMIN,
-      permissionCode: "system",
-    },
-    component: () => import("@/components/sub-container.vue"),
-  },
+  // 此处省略...
 ];
 ```
 
@@ -259,15 +301,15 @@ if (!qiankunWindow.__POWERED_BY_QIANKUN__) {
 
 ### 应用之间的通讯方式
 
-common 下封装一个应用之间通讯的方法，那所有应用都可以引用使用
-
 ## 主、微应用的路由说明
 
 最好是主、微应用路由模式统一，主是 hash 模式，微最好也是 hash 模式，history 模式也是同理，否则你需要写很多兼容的代码。（主微路由模式不统一：**困难模式**，主微路由模式统一：**简单模式**）
 
+坑: 如果主、微应用都是 history 模式路由，还会遇到浏览器回退，子应用路由丢失 activeRule 路径的问题，所以最好的方式是主和微应用都使用 hash 模式的路由。
+
 ## 创建微应用 A
 
-微应用 A：vue3+vite+history 路由模式
+微应用 A：vue3+vite+hash 路由模式
 
 待完善。。。
 

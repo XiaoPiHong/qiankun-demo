@@ -1,0 +1,52 @@
+version: "3"
+
+services:
+  # 主应用
+  qiankun-main-admin:
+    container_name: qiankun-main-admin
+    build:
+      context: ./main
+      dockerfile: Dockerfile
+    networks:
+      net-qiankun:
+        ipv4_address: 172.21.0.2
+    depends_on:
+      - qiankun-vue3-admin
+
+  # 子应用（vue3）
+  qiankun-micro-vue3-admin:
+    container_name: qiankun-micro-vue3-admin
+    build:
+      context: ./web/vue3
+      dockerfile: Dockerfile
+    networks:
+      net-qiankun:
+        ipv4_address: 172.21.0.3
+
+  # 代理转发
+  qiankun-nginx:
+    image: nginx:latest
+    container_name: qiankun-nginx
+    restart: always
+    expose:
+      - "5173"
+      - "5174"
+    ports:
+      - "5173:5173"
+      - "5173:5174"
+    volumes:
+      - ./nginx_qiankun.conf:/etc/nginx/nginx.conf
+    networks:
+      net-qiankun:
+        ipv4_address: 172.21.0.4
+      net-sso: # 同时连接到 net-sso 网络
+    depends_on:
+      - qiankun-main-admin
+      - qiankun-micro-vue3-admin
+
+networks:
+  net-qiankun:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.21.0.0/16"

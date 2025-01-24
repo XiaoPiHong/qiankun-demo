@@ -39,7 +39,7 @@ services:
     networks:
       net-qiankun:
         ipv4_address: 172.21.0.4
-      net-sso: # 同时连接到 net-sso 网络
+      sso-docker-demo_net-sso: # 同时连接到 sso-docker-demo_net-sso 网络
     depends_on:
       - qiankun-main-admin
       - qiankun-micro-vue3-admin
@@ -50,5 +50,5 @@ networks:
       driver: default
       config:
         - subnet: "172.21.0.0/16"
-  net-sso:
-    external: true # 声明 net-sso 是外部网络
+  sso-docker-demo_net-sso:
+    external: true # 声明 sso-docker-demo_net-sso 是外部网络

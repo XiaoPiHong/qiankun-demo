@@ -18,7 +18,7 @@ RUN pnpm --filter web/vue3 run build
 FROM nginx:latest
 
 # 复制 web/vue3 项目的构建结果
-COPY --from=build-stage /app/web/vue3/dist /usr/share/nginx/html
+COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 # 复制自定义的 nginx 配置文件
 COPY nginx.conf /etc/nginx/nginx.conf

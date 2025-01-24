@@ -18,7 +18,7 @@ RUN pnpm --filter main run build
 FROM nginx:latest
 
 # 复制 main 项目的构建结果
-COPY --from=build-stage /app/main/dist /usr/share/nginx/html
+COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 # 复制自定义的 nginx 配置文件
 COPY nginx.conf /etc/nginx/nginx.conf

@@ -40,6 +40,7 @@ services:
       net-qiankun:
         ipv4_address: 172.21.0.4
       sso-docker-demo_net-sso: # 同时连接到 sso-docker-demo_net-sso 网络
+        ipv4_address: 172.20.0.5
     depends_on:
       - qiankun-main-admin
       - qiankun-micro-vue3-admin

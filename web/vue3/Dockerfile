@@ -11,8 +11,8 @@ RUN npm config set registry https://registry.npmmirror.com
 RUN npm install -g pnpm
 
 # 安装依赖并构建 web/vue3 项目
-RUN pnpm install --filter web/vue3
-RUN pnpm --filter web/vue3 run build
+RUN pnpm --filter vue3 run install
+RUN pnpm --filter vue3 run build
 
 # 第 2 阶段：配置 nginx 和发布
 FROM nginx:latest

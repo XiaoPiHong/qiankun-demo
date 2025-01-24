@@ -5,8 +5,8 @@ services:
   qiankun-main-admin:
     container_name: qiankun-main-admin
     build:
-      context: ./main
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: main/Dockerfile
     networks:
       net-qiankun:
         ipv4_address: 172.21.0.2
@@ -17,8 +17,8 @@ services:
   qiankun-micro-vue3-admin:
     container_name: qiankun-micro-vue3-admin
     build:
-      context: ./web/vue3
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: web/vue3/Dockerfile
     networks:
       net-qiankun:
         ipv4_address: 172.21.0.3

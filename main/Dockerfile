@@ -11,7 +11,7 @@ RUN npm config set registry https://registry.npmmirror.com
 RUN npm install -g pnpm
 
 # 安装依赖并构建 main 项目
-RUN pnpm install --filter main
+RUN pnpm install
 RUN pnpm --filter main run build
 
 # 第 2 阶段：配置 nginx 和发布

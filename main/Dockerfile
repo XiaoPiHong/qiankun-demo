@@ -4,12 +4,21 @@ FROM node:18 as build-stage
 WORKDIR /app
 COPY . .
 
+# 设置 npm 镜像源
 RUN npm config set registry https://registry.npmmirror.com
+
+# 安装 pnpm
 RUN npm install -g pnpm
-RUN pnpm install
-RUN pnpm run build
+
+# 安装依赖并构建 main 项目
+RUN pnpm install --filter main
+RUN pnpm --filter main run build
 
 # 第 2 阶段：配置 nginx 和发布
 FROM nginx:latest
 
-COPY --from=build-stage /app/dist /usr/share/nginx/html
+# 复制 main 项目的构建结果
+COPY --from=build-stage /app/main/dist /usr/share/nginx/html
+
+# 复制自定义的 nginx 配置文件
+COPY main/nginx.conf /etc/nginx/nginx.conf

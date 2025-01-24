@@ -11,7 +11,7 @@ services:
       net-qiankun:
         ipv4_address: 172.21.0.2
     depends_on:
-      - qiankun-vue3-admin
+      - qiankun-micro-vue3-admin
 
   # 子应用（vue3）
   qiankun-micro-vue3-admin:

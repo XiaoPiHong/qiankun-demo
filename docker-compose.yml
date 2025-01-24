@@ -50,3 +50,5 @@ networks:
       driver: default
       config:
         - subnet: "172.21.0.0/16"
+  net-sso:
+    external: true # 声明 net-sso 是外部网络

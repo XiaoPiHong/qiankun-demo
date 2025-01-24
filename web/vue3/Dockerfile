@@ -4,7 +4,7 @@ FROM node:18 as build-stage
 WORKDIR /app
 COPY . .
 
-RUN npm config set registry https://registry.npmmirror.com
+RUN npm config set registry https://registry.npmjs.org
 RUN npm install -g pnpm
 RUN pnpm install
 RUN pnpm run build

@@ -35,7 +35,7 @@ services:
       - "5173:81"
       - "5174:82"
     volumes:
-      - ./nginx.qiankun.conf:/etc/nginx/nginx.conf
+      - ./nginx.qiankun.conf:/etc/nginx/nginx.qiankun.conf
     networks:
       net-qiankun:
         ipv4_address: 172.21.0.4

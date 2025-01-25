@@ -21,4 +21,4 @@ FROM nginx:latest
 COPY --from=build-stage /app/web/vue3/dist /usr/share/nginx/html/vue3
 
 # 复制自定义的 nginx 配置文件
-COPY web/vue3/nginx.conf /etc/nginx/nginx.qiankun.conf
+COPY web/vue3/nginx.conf /etc/nginx/nginx.conf

@@ -21,4 +21,4 @@ FROM nginx:latest
 COPY --from=build-stage /app/main/dist /usr/share/nginx/html/main
 
 # 复制自定义的 nginx 配置文件
-COPY main/nginx.conf /etc/nginx/nginx.qiankun.conf
+COPY main/nginx.conf /etc/nginx/nginx.conf

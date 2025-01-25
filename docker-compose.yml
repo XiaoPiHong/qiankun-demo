@@ -32,7 +32,6 @@ services:
       - "5173"
       - "5174"
     ports: # 将主机端口映射到容器上："主机端口:容器端口"
-      - "5172:80"
       - "5173:5173"
       - "5174:5174"
     volumes:
@@ -41,7 +40,6 @@ services:
       net-qiankun:
         ipv4_address: 172.21.0.4
       sso-docker-demo_net-sso: # 同时连接到 sso-docker-demo_net-sso 网络
-        ipv4_address: 172.20.0.5
     depends_on:
       - qiankun-main-admin
       - qiankun-micro-vue3-admin

@@ -303,6 +303,10 @@ if (!qiankunWindow.__POWERED_BY_QIANKUN__) {
 
 待完善。。。
 
+### 应用之间的样式隔离
+
+qiankun 提供的两种样式隔离方案都存在缺点，所以我们主子应用最好是保持一套技术方案，使用相同 ui 组件库，样式隔离的话如果是 vue 则可以使用 scoped 来隔离，不是的话可以使用 css 模块化方案。主子应用使用相同的技术方案能让我们在开发的过程中规避很多问题。
+
 ## 主、微应用的路由说明
 
 最好是主、微应用路由模式统一，主是 hash 模式，微最好也是 hash 模式，history 模式也是同理，否则你需要写很多兼容的代码。（主微路由模式不统一：**困难模式**，主微路由模式统一：**简单模式**）
@@ -313,8 +317,199 @@ if (!qiankunWindow.__POWERED_BY_QIANKUN__) {
 
 微应用 A：vue3+vite+hash 路由模式
 
-待完善。。。
+1. 微应用添加 base 静态资源前缀和允许跨域请求的响应头
+
+```ts
+import { defineConfig, loadEnv } from "vite";
+
+export default ({ mode }) => {
+  return defineConfig({
+    base: "/app-vue3/",
+    server: {
+      port: 5174,
+      headers: {
+        "Access-Control-Allow-Origin": "*", // 这里只是给开发环境使用，生产环境需在http服务器中配置（nginx）
+      },
+    },
+  });
+};
+
+/**
+ * 为什么需要配置base：
+ * 在开发环境中，可以不配置，因为在开发环境中，qiankun已经做了资源转发，但是到了生产环境，主应用是localhost:5173服务，该微应用是localhost:5174服务，这两个服务访问时候的静态资源关系表是这样的：
+ * 主访问主的静态资源：localhost:5173/assets/main.js 对应 localhost:5173/assets/main.js  （能正常访问）
+ * 子访问子的静态资源：localhost:5174/assets/microapp.js 对应 localhost:5174/assets/microapp.js  （能正常访问）
+ * 主访问子的静态资源：localhost:5173/assets/microapp.js -> 404  （不能正常正常访问）
+ * 因为主访问子的时候，所处的站点是5173，自然而然它会把子应用的资源当前自身站点的资源，也就是5173，而5173的站点是没有这些资源的，所以就会出现404的情况，所以就需要在子应用设置base配置项，让主应用知道这些资源哪些是属于子应用的，再通过http服务器转发到5174服务
+ *
+ * 最终主访问子的静态资源会变成：localhost:5173/app-vue3/assets/microapp.js 对应 localhost:5174/app-vue3/assets/microapp.js  （能正常访问）
+ */
+```
+
+在生产环境中，如果你使用的是 nginx 可以这样配置：
+
+```bash
+# 主应用服务
+location /app-vue3/ {
+    proxy_pass http://172.21.0.3/app-vue3/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+# 子应用服务
+location / {
+  # 对所有请求添加 CORS 头部，允许所有来源（这个一定要写到location内部，写到外部会生成两个相同的请求头导致跨域抛出错误）
+  add_header 'Access-Control-Allow-Origin' '*';
+}
+```
+
+2. 使用 vite-plugin-qiankun 插件支持 esmodule 脚本运行
+
+```ts
+import { defineConfig } from "vite";
+import qiankun from "vite-plugin-qiankun";
+
+// https://vitejs.dev/config/
+export default ({ mode }) => {
+  return defineConfig({
+    base: "/app-vue3/",
+    server: {
+      port: 5174,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    },
+    plugins: [
+      // 这里的第一个参数需要对应主应用中的子应用配置表subApps中的name属性
+      qiankun("vue3", {
+        useDevMode: true,
+      }),
+    ],
+  });
+};
+```
+
+3. 当在主应用中启动子应用时，使用 vite-plugin-qiankun 来启动，通过 qiankunWindow.\_\_POWERED_BY_QIANKUN\_\_来区分启动环境
+
+```ts
+import "./style.css";
+import "ant-design-vue/dist/reset.css";
+import { createApp, App as VueApp } from "vue";
+import { createPinia, Pinia } from "pinia";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import App from "./app.vue";
+import router from "./router";
+import Antd from "ant-design-vue";
+import pluginsDayjs from "@/plugins/dayjs";
+import {
+  renderWithQiankun,
+  qiankunWindow,
+} from "vite-plugin-qiankun/dist/helper";
+
+let app: VueApp<Element> | null = null;
+let pinia: Pinia | null = null;
+
+/** 独立运行初始化函数 */
+const init = () => {
+  app = createApp(App);
+  pinia = createPinia();
+  pinia.use(piniaPluginPersistedstate);
+  app.use(router).use(pinia).use(Antd).use(pluginsDayjs).mount("#app");
+};
+
+/** qiankun运行初始化函数 */
+const qiankunInit = () => {
+  renderWithQiankun({
+    bootstrap() {
+      console.log("子应用初始化");
+    },
+    mount(props: any) {
+      const { container } = props;
+      app = createApp(App);
+      if (!pinia) {
+        pinia = createPinia();
+        pinia.use(piniaPluginPersistedstate);
+      }
+      app
+        .use(router)
+        .use(pinia)
+        .use(Antd)
+        .use(pluginsDayjs)
+        .mount(container.querySelector("#app"));
+      console.log("子应用挂载");
+    },
+    unmount(props: any) {
+      app!.unmount();
+      app = null;
+      console.log("子应用卸载");
+    },
+    update(props: any) {
+      console.log("子应用更新");
+    },
+  });
+};
+
+/** 初始化 */
+console.log(qiankunWindow.__POWERED_BY_QIANKUN__);
+if (!qiankunWindow.__POWERED_BY_QIANKUN__) {
+  init();
+} else {
+  qiankunInit();
+}
+```
+
+4. 子应用根据启动环境来区分布局
+
+```tsx
+<template>
+  <a-layout
+    class="w-screen h-screen"
+    v-if="!qiankunWindow.__POWERED_BY_QIANKUN__"
+  >
+    <layout-sidebar
+      v-model:collapsed="collapsed"
+      v-model:selectedKeys="selectedKeys"
+    />
+    <a-layout class="overflow-hidden">
+      <layout-header v-model:collapsed="collapsed" />
+
+      <a-layout class="overflow-auto h-auto">
+        <a-layout-content class="!min-h-max m-4 p-4 bg-white">
+          <router-view v-slot="{ Component }">
+            <keep-alive>
+              <component :is="Component" v-if="route.meta.keepAlive" />
+            </keep-alive>
+            <component :is="Component" v-if="!route.meta.keepAlive" />
+          </router-view>
+        </a-layout-content>
+      </a-layout>
+    </a-layout>
+  </a-layout>
+  <router-view v-slot="{ Component }" v-else>
+    <keep-alive>
+      <component :is="Component" v-if="route.meta.keepAlive" />
+    </keep-alive>
+    <component :is="Component" v-if="!route.meta.keepAlive" />
+  </router-view>
+</template>
+<script lang="ts" setup>
+import LayoutSidebar from "./layout-sidebar.vue";
+import LayoutHeader from "./layout-header.vue";
+import { qiankunWindow } from "vite-plugin-qiankun/dist/helper";
+
+const route = useRoute();
+console.log(route);
+
+const selectedKeys = ref<string[]>(["1"]);
+const collapsed = ref<boolean>(false);
+</script>
+
+<style scoped></style>
+```
 
 ## 参考文章
 
 [微前端（无界）](https://juejin.cn/post/7212603829572911159?searchId=20250115091619E446D29C3FAB969EA36C)
+[qiankun：vue3 + vite 从开发到部署实现微前端](https://juejin.cn/post/7216536069285429285?searchId=2025011420204538E19D74D6B19482A839)

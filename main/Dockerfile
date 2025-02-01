@@ -4,9 +4,6 @@ FROM node:18 as build-stage
 WORKDIR /app
 COPY . .
 
-# 清理缓存
-RUN npm cache clean --force
-
 # 设置 npm 镜像源
 RUN npm config set registry https://registry.npmmirror.com
 

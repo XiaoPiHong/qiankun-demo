@@ -351,7 +351,7 @@ export default ({ mode }) => {
 ```bash
 # 主应用服务
 location /app-vue3/ {
-    proxy_pass http://172.21.0.3/app-vue3/;
+    proxy_pass http://localhost:5174/app-vue3/;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -512,4 +512,5 @@ const collapsed = ref<boolean>(false);
 ## 参考文章
 
 [微前端（无界）](https://juejin.cn/post/7212603829572911159?searchId=20250115091619E446D29C3FAB969EA36C)
+
 [qiankun：vue3 + vite 从开发到部署实现微前端](https://juejin.cn/post/7216536069285429285?searchId=2025011420204538E19D74D6B19482A839)

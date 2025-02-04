@@ -384,7 +384,7 @@ export default ({ mode }) => {
     plugins: [
       // 这里的第一个参数需要对应主应用中的子应用配置表subApps中的name属性
       qiankun("vue3", {
-        useDevMode: true,
+        useDevMode: true, // 开发环境中useDevMode 开启时与热更新插件冲突（可能与其他修改html的插件也会存在冲突），所以可能需要特殊配置（目前没有发现冲突此处不做特殊配置）
       }),
     ],
   });
